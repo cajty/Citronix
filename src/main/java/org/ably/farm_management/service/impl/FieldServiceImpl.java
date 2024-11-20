@@ -32,7 +32,6 @@ public class FieldServiceImpl implements FieldService {
     private final FieldMapper fieldMapper;
     private final FarmService farmService;
 
-
     @Override
     @Transactional
     public FieldDTO save( FieldVM fieldVM) {
