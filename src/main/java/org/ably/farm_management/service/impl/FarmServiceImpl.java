@@ -26,7 +26,6 @@ public class FarmServiceImpl implements FarmService {
 
     private final FarmRepository farmRepository;
     private final FarmMapper farmMapper;
-
     @Override
     @Transactional
     public FarmDTO save(FarmVM farmVM) {

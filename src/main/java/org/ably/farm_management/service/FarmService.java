@@ -6,7 +6,6 @@ import org.ably.farm_management.vm.FarmVM;
 import java.util.List;
 
 public interface FarmService {
-
     FarmDTO save(FarmVM farmVM);
     FarmDTO update(Long id,FarmVM farmVM);
     void delete(Long id);
