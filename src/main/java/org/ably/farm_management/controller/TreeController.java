@@ -26,7 +26,7 @@ public class TreeController {
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     public TreeDTO create(@Valid @RequestBody TreeVM treeVM) {
-        return treeService.save(treeVM);
+        return treeService.create(treeVM);
     }
 
     @Operation(summary = "Get all trees")

@@ -26,7 +26,7 @@ public class FarmController {
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     public FarmDTO create(@Valid @RequestBody FarmVM farmVM) {
-        return farmService.save(farmVM);
+        return farmService.create(farmVM);
     }
 
     @Operation(summary = "Get all farms")
