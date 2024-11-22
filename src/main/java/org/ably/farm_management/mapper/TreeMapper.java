@@ -15,6 +15,7 @@ public interface TreeMapper {
     Tree vmToEntity(TreeVM treeVM);
 
     @Mapping(target = "fieldId", source = "field.id")
+    @Mapping(target = "age", expression = "java(java.time.LocalDate.now().getYear() - tree.getPlantedAt().getYear())")
     TreeDTO entityToDTO(Tree tree);
 
 
