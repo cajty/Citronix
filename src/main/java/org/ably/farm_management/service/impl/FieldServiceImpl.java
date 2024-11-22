@@ -3,9 +3,7 @@ package org.ably.farm_management.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ably.farm_management.domain.entity.Farm;
 import org.ably.farm_management.domain.entity.Field;
-import org.ably.farm_management.dto.FarmDTO;
 import org.ably.farm_management.dto.FieldDTO;
 import org.ably.farm_management.exception.BusinessException;
 import org.ably.farm_management.mapper.FieldMapper;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,30 +29,35 @@ public class FieldServiceImpl implements FieldService {
     private final FieldMapper fieldMapper;
     private final FarmService farmService;
 
-
     @Override
-    @Transactional
-    public FieldDTO save( FieldVM fieldVM) {
-
-
-        Field field = fieldMapper.vmToEntity(fieldVM);
-        Field savedField = fieldRepository.save(field);
-        log.info("Field created: {}", savedField.getName());
-        return fieldMapper.entityToDTO(savedField);
+    public FieldDTO save(Field field) {
+        return fieldMapper.entityToDTO(fieldRepository.save(field));
     }
 
     @Override
     @Transactional
-    public FieldDTO update(Long id ,FieldVM fieldVM) {
-
-        existsById(id); // check if field exists
+    public FieldDTO create( FieldVM fieldVM) {
         farmService.existsById(fieldVM.getFarmId());
-
+        validateFarm(fieldVM.getFarmId());
         Field field = fieldMapper.vmToEntity(fieldVM);
+        log.info("Field created: {}", field.getName());
+        return save(field);
+    }
 
-        Field updatedField = fieldRepository.save(field);
-        log.info("Field updated: {}", updatedField.getName());
-        return fieldMapper.entityToDTO(updatedField);
+
+
+
+
+    @Override
+    @Transactional
+    public FieldDTO update(Long id ,FieldVM fieldVM) {
+        existsById(id);
+        farmService.existsById(fieldVM.getFarmId());
+        validateFarm(fieldVM.getFarmId());
+        Field field = fieldMapper.vmToEntity(fieldVM);
+        field.setId(id);
+        log.info("Field updated: {}", field.getName());
+        return save(field);
     }
 
     @Override
@@ -91,10 +93,33 @@ public class FieldServiceImpl implements FieldService {
         }
     }
 
-    private List<String> validateFarm( ) {
+    @Override
+    public Double findAreaById(Long id) {
+        return fieldRepository.findAreaById(id);
+    }
+
+
+    private void validateFarm(Long farmId) {
+        List<String> errors = validateFarmError(farmId);
+        if (!errors.isEmpty()) {
+            throw new BusinessException(errors.toString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    private List<String> validateFarmError(Long farmId) {
+        Double farmArea = farmService.findAreaById(farmId);
+        Integer fieldArea = fieldRepository.sumAreaByFarmId(farmId);
         List<String> errors = new ArrayList<>();
-
-
+      if (fieldRepository.countByFarmId(farmId) >= 10) {
+    errors.add("Farm can have maximum 5 fields");
+      }
+      if(fieldArea >= farmArea){
+          errors.add("Farm area is full");
+      }
+      if(farmArea /farmArea  <= 0.5){
+          errors.add("Field area is more than 50% of farm area");
+      }
         return errors;
     }
 }

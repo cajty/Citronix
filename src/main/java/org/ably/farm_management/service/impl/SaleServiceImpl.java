@@ -3,10 +3,12 @@ package org.ably.farm_management.service.impl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ably.farm_management.domain.entity.Sale;
+import org.ably.farm_management.dto.HarvestDTO;
 import org.ably.farm_management.dto.SaleDTO;
 import org.ably.farm_management.exception.BusinessException;
 import org.ably.farm_management.mapper.SaleMapper;
 import org.ably.farm_management.repository.SaleRepository;
+import org.ably.farm_management.service.HarvestService;
 import org.ably.farm_management.service.SaleService;
 import org.ably.farm_management.vm.SaleVM;
 import org.springframework.http.HttpStatus;
@@ -23,36 +25,40 @@ import java.util.List;
 public class SaleServiceImpl implements SaleService {
     private final SaleRepository saleRepository;
     private final SaleMapper saleMapper;
+    private final HarvestService harvestService;
+
 
     @Override
-    @Transactional
-    public SaleDTO save(SaleVM saleVM) {
-        Sale sale = saleMapper.vmToEntity(saleVM);
-        Sale savedSale = saleRepository.save(sale);
-
-        log.info("Sale created: {}", savedSale.getId());
-        return saleMapper.entityToDTO(savedSale);
+    public SaleDTO save(Sale sale) {
+        log.info("Sale saved: {}", sale.getId());
+        return saleMapper.entityToDTO(saleRepository.save(sale));
     }
 
     @Override
     @Transactional
+    public SaleDTO create(SaleVM saleVM) {
+        HarvestDTO harvest =  harvestService.findById(saleVM.getHarvestId());
+        Sale sale = saleMapper.vmToEntity(saleVM);
+        sale.setRevenue(harvest.getQuantityTotal() * sale.getUnitPrice());
+        log.info("Sale created: {}", sale.getId());
+        return save(sale);
+    }
+
+
+    @Override
+    @Transactional
     public SaleDTO update(Long id, SaleVM saleVM) {
-        if (!saleRepository.existsById(id)) {
-            throw new BusinessException("Sale not found with ID: " + id, HttpStatus.NOT_FOUND);
-        }
-
-        Sale updatedSale = saleRepository.save(saleMapper.vmToEntity(saleVM));
-
+        existsById(id); // check if sale exists
+        Sale updatedSale = saleMapper.vmToEntity(saleVM);
+        updatedSale.setId(id);
         log.info("Sale updated: {}", updatedSale.getId());
-        return saleMapper.entityToDTO(updatedSale);
+        return save(updatedSale);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!saleRepository.existsById(id)) {
-            throw new BusinessException("Sale not found with ID: " + id, HttpStatus.NOT_FOUND);
-        }
+        existsById(id);
         saleRepository.deleteById(id);
         log.info("Sale deleted: {}", id);
     }
@@ -69,11 +75,16 @@ public class SaleServiceImpl implements SaleService {
     @Transactional(readOnly = true)
     public List<SaleDTO> findAll() {
         List<Sale> sales = saleRepository.findAll();
-
         if (sales.isEmpty()) {
             log.warn("No sales found in the database");
         }
-
         return saleMapper.toDTOList(sales);
+    }
+
+    @Override
+    public void existsById(Long id) {
+        if(!saleRepository.existsById(id)){
+            throw new BusinessException("Sale not found with ID: " + id, HttpStatus.NOT_FOUND);
+        }
     }
 }
