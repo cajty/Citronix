@@ -1,8 +1,10 @@
 package org.ably.farm_management.vm;
 
 
-
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,8 +25,7 @@ public class SaleVM {
     @Min(value = 0, message = "Unit price must be positive")
     private double unitPrice;
 
-//    @Min(value = 0, message = "Revenue must be positive")
-//    private double revenue;
+
 
     @PastOrPresent(message = "Date must be in the past or present")
     private LocalDate date;
