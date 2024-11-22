@@ -1,4 +1,4 @@
-package org.ably.farm_management.domain.entity;
+package org.ably.farm_management.dto.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,27 +6,30 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "farm")
+@Table(name = "field")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Farm {
+public class Field {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id ;
+    private Long id;
 
     private String name;
-    private String location;
     private double area;
-    private LocalDate createdAt;
 
-    @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Field> fields ;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "farm_id")
+    private Farm farm;
+
+
+    @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Tree> trees ;
+
 
 }
