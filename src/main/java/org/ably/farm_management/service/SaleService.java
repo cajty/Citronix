@@ -8,10 +8,16 @@ import java.util.List;
 
 public interface SaleService {
     SaleDTO save(Sale sale);
+
     SaleDTO create(SaleVM saleVM);
-    SaleDTO update(Long id,SaleVM saleVM);
+
+    SaleDTO update(Long id, SaleVM saleVM);
+
     void delete(Long id);
+
     SaleDTO findById(Long id);
+
     List<SaleDTO> findAll();
+
     void existsById(Long id);
 }

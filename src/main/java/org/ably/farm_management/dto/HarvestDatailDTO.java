@@ -15,13 +15,7 @@ import org.ably.farm_management.domain.entity.Tree;
 public class HarvestDatailDTO {
 
     private Long id;
-
     private double quantity;
-
-
     private Harvest harvest;
-
-
-
     private Tree tree;
 }

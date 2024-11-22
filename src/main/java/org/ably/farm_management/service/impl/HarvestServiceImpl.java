@@ -2,9 +2,13 @@ package org.ably.farm_management.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ably.farm_management.domain.entity.Farm;
 import org.ably.farm_management.domain.entity.Harvest;
+import org.ably.farm_management.domain.entity.Tree;
 import org.ably.farm_management.domain.enums.SeasonType;
+import org.ably.farm_management.domain.enums.TreeStatus;
 import org.ably.farm_management.dto.FarmDTO;
+import org.ably.farm_management.dto.FieldDTO;
 import org.ably.farm_management.dto.HarvestDTO;
 import org.ably.farm_management.dto.TreeDTO;
 import org.ably.farm_management.exception.BusinessException;
@@ -13,6 +17,7 @@ import org.ably.farm_management.repository.HarvestRepositotry;
 import org.ably.farm_management.service.FarmService;
 import org.ably.farm_management.service.HarvestDatailService;
 import org.ably.farm_management.service.HarvestService;
+import org.ably.farm_management.service.TreeService;
 import org.ably.farm_management.util.TreeProductivityUtil;
 import org.ably.farm_management.util.determineSeasonUtil;
 import org.ably.farm_management.vm.HarvestDatailVM;
@@ -42,8 +47,6 @@ public class HarvestServiceImpl implements HarvestService {
     }
 
 
-
-
     @Override
     @Transactional
     public HarvestDTO create(HarvestVM harvestVM) {
@@ -54,14 +57,14 @@ public class HarvestServiceImpl implements HarvestService {
                 .date(harvestVM.getDate())
                 .build());
 
-        List<TreeDTO> trees =  farm.getFields().stream()
+        List<TreeDTO> trees = farm.getFields().stream()
                 .flatMap(field -> field.getTrees().stream())
                 .toList();
 
 
         double quantityTotal = 0;
 
-        for(TreeDTO tree : trees){
+        for (TreeDTO tree : trees) {
             double quantity = TreeProductivityUtil.calculateProductivity(tree.getStatus());
             quantityTotal += quantity;
             harvestDatailService.create(HarvestDatailVM.builder()
@@ -76,7 +79,6 @@ public class HarvestServiceImpl implements HarvestService {
         log.info("Harvest created: {}", harvest.getId());
         return save(harvest);
     }
-
 
 
     @Override

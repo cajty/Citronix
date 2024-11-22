@@ -38,16 +38,12 @@ public class FarmServiceImpl implements FarmService {
     public FarmDTO create(FarmVM farmVM) {
         Farm farm = farmMapper.vmToEntity(farmVM);
         log.info("Farm created: {}", farm.getName());
-        return save( farm);
+        return save(farm);
     }
-
-
-
-
 
     @Override
     @Transactional
-    public FarmDTO update(Long id,FarmVM farmVM) {
+    public FarmDTO update(Long id, FarmVM farmVM) {
         existsById(id); // check if farm exists
         Farm updatedFarm = farmMapper.vmToEntity(farmVM);
         updatedFarm.setId(id);
@@ -57,7 +53,7 @@ public class FarmServiceImpl implements FarmService {
 
     @Override
     @Transactional
-    public void delete( Long id) {
+    public void delete(Long id) {
         existsById(id); // check if farm exists
         farmRepository.deleteById(id);
         log.info("Farm deleted: {}", id);
@@ -80,14 +76,14 @@ public class FarmServiceImpl implements FarmService {
 
     @Override
     public void existsById(Long id) {
-        if(!farmRepository.existsById(id)){
+        if (!farmRepository.existsById(id)) {
             throw new BusinessException("Farm not found with ID: " + id, HttpStatus.NOT_FOUND);
         }
     }
 
     @Override
     public Double findAreaById(Long id) {
-    return farmRepository.findAreaById(id)  ;
+        return farmRepository.findAreaById(id);
     }
 
 

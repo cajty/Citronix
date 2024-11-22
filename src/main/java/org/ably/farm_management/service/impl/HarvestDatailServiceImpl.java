@@ -1,5 +1,6 @@
 package org.ably.farm_management.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ably.farm_management.domain.entity.HarvestDatail;
 import org.ably.farm_management.dto.HarvestDatailDTO;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -21,7 +23,7 @@ import java.util.List;
 @Service
 public class HarvestDatailServiceImpl implements HarvestDatailService {
     private final HarvestDatailRepository harvestDatailRepository;
-    private final HarvestDatailMapper  HarvestDatailMapper;
+    private final HarvestDatailMapper HarvestDatailMapper;
     private final HarvestService harvestService;
     private final TreeService treeService;
 
@@ -49,9 +51,6 @@ public class HarvestDatailServiceImpl implements HarvestDatailService {
         log.info("Harvest detail created: {}", harvestDatail.getId());
         return save(harvestDatail);
     }
-
-
-
 
 
     @Override
@@ -98,7 +97,7 @@ public class HarvestDatailServiceImpl implements HarvestDatailService {
 
     @Override
     public void existsById(Long id) {
-        if(!harvestDatailRepository.existsById(id)){
+        if (!harvestDatailRepository.existsById(id)) {
             throw new BusinessException("Harvest detail not found with ID: " + id, HttpStatus.NOT_FOUND);
         }
     }

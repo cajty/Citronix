@@ -1,4 +1,4 @@
-package org.ably.farm_management.dto.domain.enums;
+package org.ably.farm_management.domain.enums;
 
 public enum TreeStatus {
     YOUNG,

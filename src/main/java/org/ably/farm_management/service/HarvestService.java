@@ -8,10 +8,16 @@ import java.util.List;
 
 public interface HarvestService {
     HarvestDTO save(Harvest harvest);
+
     HarvestDTO create(HarvestVM harvestVM);
-    HarvestDTO update(Long id,HarvestVM harvestVM);
+
+    HarvestDTO update(Long id, HarvestVM harvestVM);
+
     void delete(Long id);
+
     HarvestDTO findById(Long id);
+
     List<HarvestDTO> findAll();
+
     void existsById(Long id);
 }

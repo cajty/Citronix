@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ably.farm_management.domain.enums.TreeStatus;
 import org.ably.farm_management.validator.MonthAllowed;
 
 import java.time.LocalDate;
@@ -18,13 +19,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TreeVM {
-//    private Long id;
+
 
     @NotNull(message = "The planting date is required")
     @MonthAllowed(message = "Planting is only allowed in March and May")
     @PastOrPresent(message = "Date must be in the past or present")
     private LocalDate plantedAt;
-
 
 
     @Min(value = 1, message = "The price must be number")

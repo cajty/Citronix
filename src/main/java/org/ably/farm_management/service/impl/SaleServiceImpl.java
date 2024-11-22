@@ -2,6 +2,7 @@ package org.ably.farm_management.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ably.farm_management.domain.entity.Harvest;
 import org.ably.farm_management.domain.entity.Sale;
 import org.ably.farm_management.dto.HarvestDTO;
 import org.ably.farm_management.dto.SaleDTO;
@@ -37,7 +38,7 @@ public class SaleServiceImpl implements SaleService {
     @Override
     @Transactional
     public SaleDTO create(SaleVM saleVM) {
-        HarvestDTO harvest =  harvestService.findById(saleVM.getHarvestId());
+        HarvestDTO harvest = harvestService.findById(saleVM.getHarvestId());
         Sale sale = saleMapper.vmToEntity(saleVM);
         sale.setRevenue(harvest.getQuantityTotal() * sale.getUnitPrice());
         log.info("Sale created: {}", sale.getId());
@@ -83,7 +84,7 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public void existsById(Long id) {
-        if(!saleRepository.existsById(id)){
+        if (!saleRepository.existsById(id)) {
             throw new BusinessException("Sale not found with ID: " + id, HttpStatus.NOT_FOUND);
         }
     }
