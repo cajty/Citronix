@@ -22,7 +22,6 @@ public class FieldController {
 
     private final FieldService fieldService;
 
-
     @Operation(summary = "Create new field")
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
