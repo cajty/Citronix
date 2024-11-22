@@ -26,7 +26,7 @@ public class FieldController {
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     public FieldDTO create(@Valid @RequestBody FieldVM fieldVM) {
-        return fieldService.save(fieldVM);
+        return fieldService.create(fieldVM);
     }
 
     @Operation(summary = "Get all fields")
