@@ -1,4 +1,4 @@
-package org.ably.farm_management.domain.entity;
+package org.ably.farm_management.dto.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

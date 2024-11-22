@@ -9,6 +9,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FieldRepository extends JpaRepository<Field, Long> {
 
-//   long countByFarmId(Long farmId);
+   Long countByFarmId(Long farmId);
+
+   @Query("SELECT SUM(f.area) FROM Field f WHERE f.farm.id = :farmId")
+   Integer sumAreaByFarmId(Long farmId);
+
+   @Query("SELECT f.area FROM Field f WHERE f.id = :id")
+   Double findAreaById(Long id);
+
+
+
+
 
 }

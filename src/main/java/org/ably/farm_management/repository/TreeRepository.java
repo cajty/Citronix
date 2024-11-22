@@ -8,4 +8,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TreeRepository extends JpaRepository<Tree, Long> {
+
+Integer countByFieldId(Long fieldId);
+
+
+
 }
