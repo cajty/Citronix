@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ably.farm_management.domain.enums.TreeStatus;
 import org.ably.farm_management.validator.MonthAllowed;
 
 import java.time.LocalDate;

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class HarvestDatailVM {
 
 
-    @Min(value = 0, message = "The quantity must be non-negative")
+    @Min(value = 1, message = "The quantity must More than 1")
     private double quantity;
 
     @Min(value = 1, message = "The price must be number")
