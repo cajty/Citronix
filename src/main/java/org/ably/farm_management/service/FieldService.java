@@ -7,10 +7,12 @@ import java.util.List;
 
 public interface FieldService {
 
-    FieldDTO save(FieldVM fieldVM);
+    FieldDTO save(Field field);
+    FieldDTO create(FieldVM fieldVM);
     FieldDTO update(Long id,FieldVM fieldVM);
     void delete(Long id);
     FieldDTO findById(Long id);
     List<FieldDTO> findAll();
     void existsById(Long id);
+    Double findAreaById(Long id);
 }
