@@ -1,59 +1,77 @@
 package org.ably.farm_management.service.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ably.farm_management.domain.entity.HarvestDatail;
 import org.ably.farm_management.dto.HarvestDatailDTO;
 import org.ably.farm_management.exception.BusinessException;
 import org.ably.farm_management.mapper.HarvestDatailMapper;
-import org.ably.farm_management.mapper.HarvestMapper;
 import org.ably.farm_management.repository.HarvestDatailRepository;
 import org.ably.farm_management.service.HarvestDatailService;
+import org.ably.farm_management.service.HarvestService;
+import org.ably.farm_management.service.TreeService;
 import org.ably.farm_management.vm.HarvestDatailVM;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Slf4j
 @Service
-@AllArgsConstructor
-@Validated
 public class HarvestDatailServiceImpl implements HarvestDatailService {
     private final HarvestDatailRepository harvestDatailRepository;
     private final HarvestDatailMapper  HarvestDatailMapper;
+    private final HarvestService harvestService;
+    private final TreeService treeService;
 
-    @Override
-    @Transactional
-    public HarvestDatailDTO save(HarvestDatailVM harvestDatailVM) {
-        HarvestDatail harvestDatail = HarvestDatailMapper.vmToEntity(harvestDatailVM);
-        HarvestDatail savedHarvestDatail = harvestDatailRepository.save(harvestDatail);
 
-        log.info("Harvest detail created: {}", savedHarvestDatail.getId());
-        return HarvestDatailMapper.entityToDTO(savedHarvestDatail);
+    public HarvestDatailServiceImpl(HarvestDatailRepository harvestDatailRepository, HarvestDatailMapper HarvestDatailMapper, @Lazy HarvestService harvestService, @Lazy TreeService treeService) {
+        this.harvestDatailRepository = harvestDatailRepository;
+        this.HarvestDatailMapper = HarvestDatailMapper;
+        this.harvestService = harvestService;
+        this.treeService = treeService;
     }
 
     @Override
     @Transactional
-    public HarvestDatailDTO update(Long id, HarvestDatailVM harvestDatailVM) {
-        if (!harvestDatailRepository.existsById(id)) {
-            throw new BusinessException("Harvest detail not found with ID: " + id, HttpStatus.NOT_FOUND);
-        }
+    public HarvestDatailDTO save(HarvestDatail harvestDatail) {
+        log.info("Harvest detail saved: {}", harvestDatail.getId());
+        return HarvestDatailMapper.entityToDTO(harvestDatailRepository.save(harvestDatail));
+    }
 
-        HarvestDatail updatedHarvestDatail = harvestDatailRepository.save(HarvestDatailMapper.vmToEntity(harvestDatailVM));
+    @Override
+    @Transactional
+    public HarvestDatailDTO create(HarvestDatailVM harvestDatailVM) {
+        harvestService.existsById(harvestDatailVM.getHarvestId());
+        treeService.existsById(harvestDatailVM.getTreeId());
+        HarvestDatail harvestDatail = HarvestDatailMapper.vmToEntity(harvestDatailVM);
+        log.info("Harvest detail created: {}", harvestDatail.getId());
+        return save(harvestDatail);
+    }
+
+
+
+
+
+    @Override
+    @Transactional
+    public HarvestDatailDTO update(Long id, HarvestDatailVM harvestDatailVM) {
+        existsById(id); // check if harvest detail exists
+        harvestService.existsById(harvestDatailVM.getHarvestId());
+        treeService.existsById(harvestDatailVM.getTreeId());
+        existsInHarvestSeasonAndYear(harvestDatailVM.getHarvestId(), harvestDatailVM.getTreeId());
+        HarvestDatail updatedHarvestDatail = HarvestDatailMapper.vmToEntity(harvestDatailVM);
+        updatedHarvestDatail.setId(id);
 
         log.info("Harvest detail updated: {}", updatedHarvestDatail.getId());
-        return HarvestDatailMapper.entityToDTO(updatedHarvestDatail);
+        return save(updatedHarvestDatail);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!harvestDatailRepository.existsById(id)) {
-            throw new BusinessException("Harvest detail not found with ID: " + id, HttpStatus.NOT_FOUND);
-        }
+        existsById(id); // check if harvest detail exists
         harvestDatailRepository.deleteById(id);
         log.info("Harvest detail deleted: {}", id);
     }
@@ -77,4 +95,19 @@ public class HarvestDatailServiceImpl implements HarvestDatailService {
 
         return HarvestDatailMapper.toDTOList(harvestDatails);
     }
+
+    @Override
+    public void existsById(Long id) {
+        if(!harvestDatailRepository.existsById(id)){
+            throw new BusinessException("Harvest detail not found with ID: " + id, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private void existsInHarvestSeasonAndYear(Long harvestId, Long treeId) {
+        if (harvestDatailRepository.existsInHarvestSeasonAndYear(harvestId, treeId)) {
+            throw new BusinessException("Harvest detail already exists in the harvest season and year", HttpStatus.CONFLICT);
+        }
+    }
+
+
 }
