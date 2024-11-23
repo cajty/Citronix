@@ -14,6 +14,8 @@ public interface SaleMapper {
     @Mapping(target = "id", ignore = true)
     Sale vmToEntity(SaleVM saleVM);
 
+
+    @Mapping(target = "revenue", expression = "java(sale.getQuantity() * sale.getUnitPrice())")
     SaleDTO entityToDTO(Sale sale);
 
     List<SaleDTO> toDTOList(List<Sale> sales);

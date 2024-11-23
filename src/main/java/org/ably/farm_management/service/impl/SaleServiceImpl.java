@@ -39,8 +39,11 @@ public class SaleServiceImpl implements SaleService {
     @Transactional
     public SaleDTO create(SaleVM saleVM) {
         HarvestDTO harvest = harvestService.findById(saleVM.getHarvestId());
+        if(harvest.getQuantityTotal()< saleVM.getQuantity()) {
+            throw new BusinessException("Sale quantity exceeds harvest quantity", HttpStatus.BAD_REQUEST);
+        }
         Sale sale = saleMapper.vmToEntity(saleVM);
-        sale.setRevenue(harvest.getQuantityTotal() * sale.getUnitPrice());
+        ;
         log.info("Sale created: {}", sale.getId());
         return save(sale);
     }

@@ -1,6 +1,7 @@
 package org.ably.farm_management.vm;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class SaleVM {
 
+
     @NotBlank(message = "Client name is required")
     @Size(min = 2, max = 100, message = "Client name must be between 2 and 100 characters")
     private String client;
@@ -23,7 +25,11 @@ public class SaleVM {
     private double unitPrice;
 
 
+    @Min(value = 1, message = "Quantity must be positive")
+    private double quantity;
+
     @PastOrPresent(message = "Date must be in the past or present")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     @Min(value = 1, message = "The price must be number")

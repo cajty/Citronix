@@ -119,11 +119,11 @@ class FieldServiceImplTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when farm has maximum fields")
+        @DisplayName("Should throw exception when farm has maximum fields reached 10")
         void create_MaxFieldsReached_ThrowsException() {
             // Arrange
             doNothing().when(farmService).existsById(anyLong());
-            when(fieldRepository.countByFarmId(anyLong())).thenReturn(5L);
+            when(fieldRepository.countByFarmId(anyLong())).thenReturn(10L);
 
             // Act & Assert
             BusinessException exception = assertThrows(BusinessException.class,

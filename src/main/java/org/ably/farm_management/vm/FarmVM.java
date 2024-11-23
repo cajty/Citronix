@@ -1,10 +1,8 @@
 package org.ably.farm_management.vm;
 
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,7 +29,8 @@ public class FarmVM {
     @Min(value = 2000, message = "Farm area must be at least 2,000 m²")
     private double area;
 
-    @Past(message = "Creation date must be in the past")
+    @PastOrPresent(message = "Creation date must be in the past OR present")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate createdAt;
 
 
