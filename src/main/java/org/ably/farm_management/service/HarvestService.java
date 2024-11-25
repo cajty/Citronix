@@ -20,4 +20,6 @@ public interface HarvestService {
     List<HarvestDTO> findAll();
 
     void existsById(Long id);
+
+    void updateQuantity(Long id, double quantity);
 }

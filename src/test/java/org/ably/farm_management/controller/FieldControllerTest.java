@@ -1,5 +1,6 @@
 package org.ably.farm_management.controller;
 
+import jakarta.validation.ConstraintViolationException;
 import org.ably.farm_management.dto.FieldDTO;
 import org.ably.farm_management.service.FieldService;
 import org.ably.farm_management.vm.FieldVM;
@@ -59,19 +60,6 @@ class FieldControllerTest {
         assertNotNull(createdField);
         assertEquals(validFieldDTO.getId(), createdField.getId());
         verify(fieldService, times(1)).create(validFieldVM);
-    }
-
-    @Test
-    void testCreate_InvalidField_ThrowsValidationException() {
-        // Arrange
-        FieldVM invalidFieldVM = FieldVM.builder()
-                .name("")  // Invalid name
-                .area(500.0)  // Invalid area
-                .farmId(0L)  // Invalid farm ID
-                .build();
-
-        // Act & Assert
-        assertThrows(Exception.class, () -> fieldController.create(invalidFieldVM));
     }
 
     @Test

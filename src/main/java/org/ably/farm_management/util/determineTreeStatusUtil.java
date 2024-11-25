@@ -10,11 +10,14 @@ public class determineTreeStatusUtil {
 
         if (age < 3) {
             return TreeStatus.YOUNG;
-        } else if (age < 10) {
-            return TreeStatus.PRODUCTIVE;
+        } else if (  age < 10) {
+            return TreeStatus.Mature;
         } else if (age < 20) {
+            return TreeStatus.OLD;
+        } else if (age >= 20) {
             return TreeStatus.NON_PRODUCTIVE;
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("Invalid tree age");
         }
     }

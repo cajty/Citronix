@@ -43,7 +43,7 @@ public class SaleServiceImpl implements SaleService {
             throw new BusinessException("Sale quantity exceeds harvest quantity", HttpStatus.BAD_REQUEST);
         }
         Sale sale = saleMapper.vmToEntity(saleVM);
-        ;
+        harvestService.updateQuantity(harvest.getId(), harvest.getQuantityTotal() - saleVM.getQuantity());
         log.info("Sale created: {}", sale.getId());
         return save(sale);
     }

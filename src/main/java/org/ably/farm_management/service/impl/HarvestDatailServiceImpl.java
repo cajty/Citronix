@@ -133,12 +133,16 @@ public class HarvestDatailServiceImpl implements HarvestDatailService {
             errors.add(e.getMessage());
 
         }
-        try {
-            harvestDatailRepository.existsInHarvestSeasonAndYear(harvestId, treeId);
-        } catch (Exception e) {
-            errors.add(e.getMessage());
+        if( harvestDatailRepository.existsInHarvestSeasonAndYear(harvestId, treeId)){
+            errors.add("Harvest detail already exists in the harvest season and year");
         }
+
+
         return errors;
+    }
+@Override
+    public boolean existsInSeasonAndYear(Long harvestId, Long treeId) {
+        return harvestDatailRepository.existsInHarvestSeasonAndYear(harvestId, treeId);
     }
 
 
