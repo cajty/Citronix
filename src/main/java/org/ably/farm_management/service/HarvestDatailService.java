@@ -20,4 +20,6 @@ public interface HarvestDatailService {
     List<HarvestDatailDTO> findAll();
 
     void existsById(Long id);
+
+    boolean existsInSeasonAndYear(Long harvestId, Long treeId);
 }

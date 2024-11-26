@@ -65,13 +65,16 @@ public class HarvestServiceImpl implements HarvestService {
         double quantityTotal = 0;
 
         for (TreeDTO tree : trees) {
-            double quantity = TreeProductivityUtil.calculateProductivity(tree.getStatus());
-            quantityTotal += quantity;
-            harvestDatailService.create(HarvestDatailVM.builder()
-                    .harvestId(harvest.getId())
-                    .treeId(tree.getId())
-                    .quantity(quantity)
-                    .build());
+           if(harvestDatailService.existsInSeasonAndYear(harvest.getId(), tree.getId())){
+               double quantity = TreeProductivityUtil.calculateProductivity(tree.getStatus());
+               quantityTotal += quantity;
+               harvestDatailService.create(HarvestDatailVM.builder()
+                       .harvestId(harvest.getId())
+                       .treeId(tree.getId())
+                       .quantity(quantity)
+                       .build());
+           }
+
         }
 
         harvest.setQuantityTotal(quantityTotal);
@@ -118,10 +121,21 @@ public class HarvestServiceImpl implements HarvestService {
     }
 
     @Override
+    @Transactional
     public void existsById(Long id) {
         if (!harvestRepositotry.existsById(id)) {
             throw new BusinessException("Harvest not found with ID: " + id, HttpStatus.NOT_FOUND);
         }
+
+    }
+
+    @Override
+    @Transactional
+    public void updateQuantity(Long id, double quantity) {
+        Harvest harvest = harvestRepositotry.findById(id)
+                .orElseThrow(() -> new BusinessException("Harvest not found with ID: " + id, HttpStatus.NOT_FOUND));
+        harvest.setQuantityTotal(quantity);
+        harvestRepositotry.save(harvest);
 
     }
 }

@@ -22,7 +22,7 @@ public class Sale {
 
     private String client;
     private double unitPrice;
-    private double revenue;
+    private double quantity;
     private LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
