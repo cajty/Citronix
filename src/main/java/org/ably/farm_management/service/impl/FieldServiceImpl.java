@@ -106,6 +106,9 @@ public class FieldServiceImpl implements FieldService {
     private List<String> validateFarmError(Long farmId) {
         Double farmArea = farmService.findAreaById(farmId);
         Integer fieldArea = fieldRepository.sumAreaByFarmId(farmId);
+        if (fieldArea == null) {
+            fieldArea = 0;
+        }
         List<String> errors = new ArrayList<>();
         if (fieldRepository.countByFarmId(farmId) >= 10) {
             errors.add("Farm can have maximum 5 fields");
