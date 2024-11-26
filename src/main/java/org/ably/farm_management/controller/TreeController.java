@@ -1,11 +1,10 @@
 package org.ably.farm_management.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import org.ably.farm_management.dto.TreeDTO;
 import org.ably.farm_management.service.TreeService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.ably.farm_management.vm.TreeVM;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +13,8 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api/tree")
 @AllArgsConstructor
@@ -21,7 +22,6 @@ import static org.springframework.http.HttpStatus.OK;
 public class TreeController {
 
     private final TreeService treeService;
-    
 
     @Operation(summary = "Create new tree")
     @PostMapping("/add")

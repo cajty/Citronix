@@ -16,6 +16,8 @@ public interface HarvestDatailMapper {
     @Mapping(target = "tree.id", source = "treeId")
     HarvestDatail vmToEntity(HarvestDatailVM harvestDatailVM);
 
+    @Mapping(target = "harvestId", source = "harvest.id")
+    @Mapping(target = "treeId", source = "tree.id")
     HarvestDatailDTO entityToDTO(HarvestDatail harvestDatail);
 
     List<HarvestDatailDTO> toDTOList(List<HarvestDatail> harvestDatails);

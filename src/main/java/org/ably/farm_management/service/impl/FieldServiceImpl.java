@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     @Transactional
-    public FieldDTO create( FieldVM fieldVM) {
+    public FieldDTO create(FieldVM fieldVM) {
         farmService.existsById(fieldVM.getFarmId());
         validateFarm(fieldVM.getFarmId());
         Field field = fieldMapper.vmToEntity(fieldVM);
@@ -45,12 +46,9 @@ public class FieldServiceImpl implements FieldService {
     }
 
 
-
-
-
     @Override
     @Transactional
-    public FieldDTO update(Long id ,FieldVM fieldVM) {
+    public FieldDTO update(Long id, FieldVM fieldVM) {
         existsById(id);
         farmService.existsById(fieldVM.getFarmId());
         validateFarm(fieldVM.getFarmId());
@@ -62,7 +60,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     @Transactional
-    public void delete( Long id) {
+    public void delete(Long id) {
         existsById(id); // check if field exists
         fieldRepository.deleteById(id);
         log.info("Field deleted: {}", id);
@@ -70,10 +68,8 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     @Transactional(readOnly = true)
-    public FieldDTO findById( Long id) {
-        return fieldRepository.findById(id)
-                .map(fieldMapper::entityToDTO)
-                .orElseThrow(() -> new BusinessException("Field not found with ID: " + id, HttpStatus.NOT_FOUND));
+    public FieldDTO findById(Long id) {
+        return fieldRepository.findById(id).map(fieldMapper::entityToDTO).orElseThrow(() -> new BusinessException("Field not found with ID: " + id, HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -110,16 +106,19 @@ public class FieldServiceImpl implements FieldService {
     private List<String> validateFarmError(Long farmId) {
         Double farmArea = farmService.findAreaById(farmId);
         Integer fieldArea = fieldRepository.sumAreaByFarmId(farmId);
+        if (fieldArea == null) {
+            fieldArea = 0;
+        }
         List<String> errors = new ArrayList<>();
-      if (fieldRepository.countByFarmId(farmId) >= 10) {
-    errors.add("Farm can have maximum 5 fields");
-      }
-      if(fieldArea >= farmArea){
-          errors.add("Farm area is full");
-      }
-      if(farmArea /farmArea  <= 0.5){
-          errors.add("Field area is more than 50% of farm area");
-      }
+        if (fieldRepository.countByFarmId(farmId) >= 10) {
+            errors.add("Farm can have maximum 5 fields");
+        }
+        if (fieldArea >= farmArea) {
+            errors.add("Farm area is full");
+        }
+        if (farmArea / farmArea <= 0.5) {
+            errors.add("Field area is more than 50% of farm area");
+        }
         return errors;
     }
 }

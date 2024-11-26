@@ -14,8 +14,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TreeDTO {
+
     private Long id;
     private LocalDate plantedAt;
+    private Integer age;
     private TreeStatus status;
     private Long fieldId;
 }

@@ -19,13 +19,7 @@ import java.time.LocalDate;
 public class HarvestDTO {
 
     private Long id;
-
-
     private SeasonType status;
-
     private LocalDate date;
-
     private double quantityTotal;
-
-
 }

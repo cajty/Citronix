@@ -1,7 +1,10 @@
 package org.ably.farm_management.service.impl;
 
+
 import lombok.extern.slf4j.Slf4j;
+import org.ably.farm_management.domain.entity.Harvest;
 import org.ably.farm_management.domain.entity.HarvestDatail;
+import org.ably.farm_management.dto.HarvestDTO;
 import org.ably.farm_management.dto.HarvestDatailDTO;
 import org.ably.farm_management.exception.BusinessException;
 import org.ably.farm_management.mapper.HarvestDatailMapper;
@@ -15,13 +18,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
 public class HarvestDatailServiceImpl implements HarvestDatailService {
     private final HarvestDatailRepository harvestDatailRepository;
-    private final HarvestDatailMapper  HarvestDatailMapper;
+    private final HarvestDatailMapper HarvestDatailMapper;
     private final HarvestService harvestService;
     private final TreeService treeService;
 
@@ -51,18 +56,23 @@ public class HarvestDatailServiceImpl implements HarvestDatailService {
     }
 
 
-
-
-
     @Override
     @Transactional
     public HarvestDatailDTO update(Long id, HarvestDatailVM harvestDatailVM) {
-        existsById(id); // check if harvest detail exists
-        harvestService.existsById(harvestDatailVM.getHarvestId());
-        treeService.existsById(harvestDatailVM.getTreeId());
-        existsInHarvestSeasonAndYear(harvestDatailVM.getHarvestId(), harvestDatailVM.getTreeId());
+        HarvestDatailDTO harvestDatail = findById(id);
+
+        if(!harvestDatail.getHarvestId().equals(harvestDatailVM.getHarvestId()) &&
+                !harvestDatail.getTreeId().equals(harvestDatailVM.getTreeId()))
+        {
+            validateHarvestDatail(harvestDatailVM.getHarvestId(), harvestDatailVM.getTreeId());
+
+        }
+
         HarvestDatail updatedHarvestDatail = HarvestDatailMapper.vmToEntity(harvestDatailVM);
         updatedHarvestDatail.setId(id);
+
+
+
 
         log.info("Harvest detail updated: {}", updatedHarvestDatail.getId());
         return save(updatedHarvestDatail);
@@ -71,8 +81,10 @@ public class HarvestDatailServiceImpl implements HarvestDatailService {
     @Override
     @Transactional
     public void delete(Long id) {
-        existsById(id); // check if harvest detail exists
+        existsById(id);
         harvestDatailRepository.deleteById(id);
+
+
         log.info("Harvest detail deleted: {}", id);
     }
 
@@ -98,15 +110,39 @@ public class HarvestDatailServiceImpl implements HarvestDatailService {
 
     @Override
     public void existsById(Long id) {
-        if(!harvestDatailRepository.existsById(id)){
+        if (!harvestDatailRepository.existsById(id)) {
             throw new BusinessException("Harvest detail not found with ID: " + id, HttpStatus.NOT_FOUND);
         }
     }
 
-    private void existsInHarvestSeasonAndYear(Long harvestId, Long treeId) {
-        if (harvestDatailRepository.existsInHarvestSeasonAndYear(harvestId, treeId)) {
-            throw new BusinessException("Harvest detail already exists in the harvest season and year", HttpStatus.CONFLICT);
+
+    private void validateHarvestDatail(Long harvestId, Long treeId) {
+        List<String> errors = existsInHarvestSeasonAndYear(harvestId, treeId);
+        if (!errors.isEmpty()) {
+            throw new BusinessException(errors.toString(), HttpStatus.BAD_REQUEST);
         }
+    }
+    private  List<String>  existsInHarvestSeasonAndYear(Long harvestId, Long treeId) {
+        List<String> errors = new ArrayList<>();
+        if (harvestDatailRepository.existsInHarvestSeasonAndYear(harvestId, treeId)) {
+            errors.add("Harvest detail already exists in the harvest season and year");
+        }
+        try {
+            harvestDatailRepository.existsInHarvestSeasonAndYear(harvestId, treeId);
+        } catch (Exception e) {
+            errors.add(e.getMessage());
+
+        }
+        if( harvestDatailRepository.existsInHarvestSeasonAndYear(harvestId, treeId)){
+            errors.add("Harvest detail already exists in the harvest season and year");
+        }
+
+
+        return errors;
+    }
+@Override
+    public boolean existsInSeasonAndYear(Long harvestId, Long treeId) {
+        return harvestDatailRepository.existsInHarvestSeasonAndYear(harvestId, treeId);
     }
 
 

@@ -17,12 +17,10 @@ import java.time.LocalDate;
 public class SaleDTO {
 
     private Long id;
-
     private String client;
     private double unitPrice;
+    private double quantity;
     private double revenue;
     private LocalDate date;
-
-
     private Harvest harvest;
 }

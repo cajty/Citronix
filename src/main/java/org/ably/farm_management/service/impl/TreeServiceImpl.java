@@ -30,7 +30,7 @@ public class TreeServiceImpl implements TreeService {
 
     private final TreeRepository treeRepository;
     private final TreeMapper treeMapper;
-   private final FieldService fieldService ;
+    private final FieldService fieldService;
 
     @Override
     public TreeDTO save(Tree tree) {
@@ -41,7 +41,7 @@ public class TreeServiceImpl implements TreeService {
 
     @Override
     @Transactional
-    public TreeDTO create( TreeVM treeVM) {
+    public TreeDTO create(TreeVM treeVM) {
         fieldService.existsById(treeVM.getFieldId());
         validateField(treeVM.getFieldId());
         Tree tree = treeMapper.vmToEntity(treeVM);
@@ -50,12 +50,9 @@ public class TreeServiceImpl implements TreeService {
     }
 
 
-
-
-
     @Override
     @Transactional
-    public TreeDTO update(Long id,TreeVM treeVM) {
+    public TreeDTO update(Long id, TreeVM treeVM) {
         existsById(id); // check if tree exists
         fieldService.existsById(treeVM.getFieldId());
         validateField(treeVM.getFieldId());
@@ -68,7 +65,7 @@ public class TreeServiceImpl implements TreeService {
 
     @Override
     @Transactional
-    public void delete( Long id) {
+    public void delete(Long id) {
         existsById(id);
         treeRepository.deleteById(id);
         log.info("Tree deleted: {}", id);
@@ -94,20 +91,18 @@ public class TreeServiceImpl implements TreeService {
 
     @Override
     public void existsById(Long id) {
-        if(!treeRepository.existsById(id)){
+        if (!treeRepository.existsById(id)) {
             throw new BusinessException("Tree not found with ID: " + id, HttpStatus.NOT_FOUND);
         }
 
     }
 
 
-
-    // creat cronjob to update tree status
-  @Scheduled(cron = "0 0 0 1 * *")
+    @Scheduled(cron = "0 0 0 1 * *")
     public void updateTreeStatus() {
         List<Tree> trees = treeRepository.findAll();
 
-        for(Tree tree : trees){
+        for (Tree tree : trees) {
             TreeStatus status = determineTreeStatusUtil.determineTreeStatus(tree.getPlantedAt());
             tree.setStatus(status);
             treeRepository.save(tree);
@@ -116,7 +111,7 @@ public class TreeServiceImpl implements TreeService {
     }
 
 
-    private void validateField(Long  fieldId) {
+    private void validateField(Long fieldId) {
         List<String> errors = validateFarmError(fieldId);
         if (!errors.isEmpty()) {
             throw new BusinessException(errors.toString(), HttpStatus.BAD_REQUEST);
@@ -124,11 +119,11 @@ public class TreeServiceImpl implements TreeService {
     }
 
 
-    private List<String> validateFarmError(Long  fieldId) {
+    private List<String> validateFarmError(Long fieldId) {
         double fieldArea = fieldService.findAreaById(fieldId);
-        double trees =treeRepository.countByFieldId(fieldId);
+        double trees = treeRepository.countByFieldId(fieldId);
         List<String> errors = new ArrayList<>();
-        if (fieldArea / trees + 1 >= 100){ // 10 arbres par 1 000 m²). 1000/10 = 100
+        if (fieldArea / trees + 1 >= 100) { // 10 arbres par 1 000 m²). 1000/10 = 100
             errors.add("Farm can have maximum 5 fields");
         }
         return errors;
