@@ -1,4 +1,4 @@
-# Citronix - Système de Gestion de Ferme de CitronX
+# Citronix - Système de Gestion de Ferme 
 
 ## 1. Aperçu
 
